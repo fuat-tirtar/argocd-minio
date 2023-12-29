@@ -2,30 +2,35 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: minio-deployment
-  namespace: minio
 spec:
-  replicas: 2
   selector:
     matchLabels:
       app: minio
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
         app: minio
     spec:
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          claimName: minio-pv-claim
       containers:
       - name: minio
         image: minio/minio:latest
+        args:
+        - server
+        - /storage
         env:
         - name: MINIO_ACCESS_KEY
-          value: your-access-key
+          value: "minio"
         - name: MINIO_SECRET_KEY
-          value: your-secret-key
+          value: "minio123"
         ports:
         - containerPort: 9000
+          hostPort: 9000
         volumeMounts:
-        - name: minio-data
-          mountPath: /data
-      volumes:
-      - name: minio-data
-        emptyDir: {}
+        - name: storage 
+          mountPath: "/storage"
