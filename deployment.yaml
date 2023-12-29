@@ -9,7 +9,7 @@ metadata:
   name: minio-deployment
   namespace: minio
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: minio
@@ -48,4 +48,4 @@ spec:
     - protocol: TCP
       port: 9000
       targetPort: 9000
-  type: LoadBalancer
+  type: ClusterIP
